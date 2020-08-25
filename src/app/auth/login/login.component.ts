@@ -19,7 +19,8 @@ export class LoginComponent implements OnInit {
   public auth2: any;
 
   public loginForm = this.fb.group({
-    // email: [ localStorage.getItem('email') || '' , [ Validators.required, Validators.email ] ],
+    /// email: [ localStorage.getItem('email') || '' , [ Validators.required, Validators.email ] ],
+    // email: [ 'ad@hotmail.com' , [ Validators.required, Validators.email ] ],
     email: [ 'julian@gmail.com' , [ Validators.required, Validators.email ] ],
     password: ['123456', Validators.required ],
     remember: [false]
@@ -77,9 +78,9 @@ export class LoginComponent implements OnInit {
             this.usuarioService.loginGoogle( id_token )
               .subscribe( resp => {
                 // Navegar al Dashboard fuera de Angular
-                this.ngZone.run( () => {
+                // this.ngZone.run( () => {
                   this.router.navigateByUrl('/');
-                });
+                // });
               });
         }, (error: any) => {
             alert(JSON.stringify(error, undefined, 2));

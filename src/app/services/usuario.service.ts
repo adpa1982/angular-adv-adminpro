@@ -1,10 +1,12 @@
 import { Injectable, NgZone } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap, map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+
+import { Usuario } from './../models/usuario.model';
 
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
@@ -19,11 +21,20 @@ declare const gapi: any;
 export class UsuarioService {
 
   public auth2: any;
+  public usuario: Usuario;
 
   constructor( private http: HttpClient,
                private router: Router,
                private ngZone: NgZone ) {
     this.googleInit();
+  }
+
+  get token(): string {
+    return localStorage.getItem('token') || '';
+  }
+
+  get uid(): string {
+    return this.usuario.uid || '';
   }
 
   crearUsuario( formData: RegisterForm ): Observable<any> {
@@ -33,6 +44,18 @@ export class UsuarioService {
                   localStorage.setItem('token', resp.token );
                 })
               );
+  }
+
+  actualizarPerfil( data: { email: string, nombre: string, role: string } ): Observable<object> {
+    data = {
+      ...data,
+      role: this.usuario.role
+    };
+    return this.http.put(`${ base_url }/usuarios/${ this.uid }`, data, {
+      headers: {
+        'x-token': this.token
+      }
+    });
   }
 
   login( formData: LoginForm ): Observable<any> {
@@ -45,26 +68,29 @@ export class UsuarioService {
   }
 
   validarToken(): any {
-    const token = localStorage.getItem('token') || '';
-
     return this.http.get(`${ base_url }/login/renew`, {
-      headers: { 'x-token': token }
+      headers: { 'x-token': this.token }
     }).pipe(
-      tap( (resp: any) => {
+      map( (resp: any) => {
+        const { email, google, nombre, role, img = '', uid} = resp.usuario;
+        // Instancia de la clase
+        this.usuario = new Usuario(nombre, email, '', img, google, role, uid);
+        this.usuario.imprimirUsuario();
         localStorage.setItem('token', resp.token );
+        return true;
       }),
-      map( resp => true),
       catchError( error => of(false) )
     );
   }
 
   logout(): void {
     localStorage.removeItem('token');
-    this.auth2.signOut().then(() => {
+    this.router.navigateByUrl('/login');
+    /*this.auth2.signOut().then(() => {
       this.ngZone.run(() => {
         this.router.navigateByUrl('/login');
       });
-    });
+    });*/
   }
 
   // Login de google
