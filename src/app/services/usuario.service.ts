@@ -10,6 +10,7 @@ import { Usuario } from './../models/usuario.model';
 
 import { RegisterForm } from '../interfaces/register-form.interface';
 import { LoginForm } from '../interfaces/login-form.interface';
+import { CargarUsuario } from './../interfaces/cargar-usuarios.interface';
 
 const base_url = environment.base_url;
 
@@ -37,6 +38,39 @@ export class UsuarioService {
     return this.usuario.uid || '';
   }
 
+  get headers(): any {
+    return {
+      headers: { 'x-token': this.token }
+    };
+  }
+
+  //
+  cargarUsuarios( desde: number = 0 ): Observable<{total: number; usuarios: Usuario }> {
+    const url = `${ base_url }/usuarios?desde=${ desde }`;
+    // return this.http.get<{total: number; usuarios: Usuario }>(url, this.headers )
+    return this.http.get<CargarUsuario>( url, this.headers )
+            .pipe(
+              map( resp => {
+                const usuarios = resp.usuarios.map(
+                  user => new Usuario(user.nombre, user.email, '', user.img, user.google, user.role, user.uid )
+                );
+                return {
+                  total: resp.total,
+                  usuarios
+                };
+              })
+            );
+  }
+
+  guardarUsuario( usuario: Usuario ): any {
+    return this.http.put(`${ base_url }/usuarios/${ usuario.uid }`, usuario, this.headers );
+  }
+
+  eliminarUsuario( usuario: Usuario ): any {
+    const url = `${ base_url }/usuarios/${ usuario.uid }`;
+    return this.http.delete( url, this.headers );
+  }
+
   crearUsuario( formData: RegisterForm ): Observable<any> {
     return this.http.post(`${ base_url }/usuarios`, formData )
               .pipe(
@@ -51,11 +85,7 @@ export class UsuarioService {
       ...data,
       role: this.usuario.role
     };
-    return this.http.put(`${ base_url }/usuarios/${ this.uid }`, data, {
-      headers: {
-        'x-token': this.token
-      }
-    });
+    return this.http.put(`${ base_url }/usuarios/${ this.uid }`, data, this.headers );
   }
 
   login( formData: LoginForm ): Observable<any> {

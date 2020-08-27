@@ -20,7 +20,12 @@ export class Usuario {
   get imagenUrl(): string {
     let image = `${ base_url }/upload/usuarios/no-image`;
 
-    // if ( this.img.includes('https') ){return this.img;}
+    /*if ( this.img.includes('https') ) {
+       return this.img;
+    } */
+    if ( this.google ) {
+       return image;
+    }
 
     if ( this.img ) {
        image =  `${ base_url }/upload/usuarios/${ this.img }`;
