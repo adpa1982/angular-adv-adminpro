@@ -24,7 +24,7 @@ export class Usuario {
        return this.img;
     } */
     if ( this.google ) {
-       return image;
+       return this.img;
     }
 
     if ( this.img ) {

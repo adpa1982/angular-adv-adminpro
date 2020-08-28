@@ -44,13 +44,14 @@ export class UsuarioService {
     };
   }
 
-  //
-  cargarUsuarios( desde: number = 0 ): Observable<{total: number; usuarios: Usuario }> {
+
+  cargarUsuarios( desde: number = 0 ): any {
     const url = `${ base_url }/usuarios?desde=${ desde }`;
     // return this.http.get<{total: number; usuarios: Usuario }>(url, this.headers )
     return this.http.get<CargarUsuario>( url, this.headers )
             .pipe(
               map( resp => {
+                console.log(resp);
                 const usuarios = resp.usuarios.map(
                   user => new Usuario(user.nombre, user.email, '', user.img, user.google, user.role, user.uid )
                 );

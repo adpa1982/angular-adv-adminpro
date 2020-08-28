@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 import Swal, { SweetAlertResult } from 'sweetalert2';
 
@@ -7,7 +8,7 @@ import { Usuario } from './../../../models/usuario.model';
 import { UsuarioService } from './../../../services/usuario.service';
 import { BusquedasService } from './../../../services/busquedas.service';
 import { ModalImagenService } from './../../../services/modal-imagen.service';
-import { delay } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-usuarios',
