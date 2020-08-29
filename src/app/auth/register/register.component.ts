@@ -49,7 +49,7 @@ export class RegisterComponent implements OnInit {
           this.router.navigateByUrl('/');
         }, (err) => {
           // Si sucede un error
-          console.log(err.error);
+          console.log(err.error.msg);
           Swal.fire('Error', err.error.msg, 'error' );
         });
   }

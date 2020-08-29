@@ -14,7 +14,7 @@ export class Usuario {
   ){}
 
   imprimirUsuario(): void {
-    console.log( this.nombre );
+    // console.log( this.nombre );
   }
 
   get imagenUrl(): string {

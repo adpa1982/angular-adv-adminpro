@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): boolean {
-      console.log('Paso por Auht Guard');
+      // console.log('Paso por Auht Guard');
       return this.usuarioService.validarToken()
                 .pipe(
                   tap( estaAutenticado => {
